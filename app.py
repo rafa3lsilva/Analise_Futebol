@@ -196,32 +196,37 @@ if st.session_state.dados_jogos:
     st.write(f"🛡️ Média de gols sofridos (Away): {media_sofridos:.2f}")
 
 
-# Dados das médias
-media_home_marcados = df_home_media["Gols Marcados"].mean()
-media_home_sofridos = df_home_media["Gols Sofridos"].mean()
-media_away_marcados = df_away_media["Gols Marcados"].mean()
-media_away_sofridos = df_away_media["Gols Sofridos"].mean()
+# Verifica se os DataFrames existem e não estão vazios
+if "df_home_media" in locals() and not df_home_media.empty and \
+   "df_away_media" in locals() and not df_away_media.empty:
 
-# Preparando os dados para o gráfico
-categorias = ["Gols Marcados", "Gols Sofridos"]
-valores_home = [media_home_marcados, media_home_sofridos]
-valores_away = [media_away_marcados, media_away_sofridos]
+    # Calcula as médias com fallback para zero se estiverem vazias
+    media_home_marcados = df_home_media["Gols Marcados"].mean() or 0
+    media_home_sofridos = df_home_media["Gols Sofridos"].mean() or 0
+    media_away_marcados = df_away_media["Gols Marcados"].mean() or 0
+    media_away_sofridos = df_away_media["Gols Sofridos"].mean() or 0
 
-x = range(len(categorias))
+    # Dados para o gráfico
+    categorias = ["Gols Marcados", "Gols Sofridos"]
+    valores_home = [media_home_marcados, media_home_sofridos]
+    valores_away = [media_away_marcados, media_away_sofridos]
+    x = range(len(categorias))
 
-# Criando o gráfico
-fig, ax = plt.subplots()
-ax.bar([i - 0.2 for i in x], valores_home,
-       width=0.4, label="Home", color="#1f77b4")
-ax.bar([i + 0.2 for i in x], valores_away,
-       width=0.4, label="Away", color="#ff7f0e")
+    # Gráfico
+    fig, ax = plt.subplots()
+    ax.bar([i - 0.2 for i in x], valores_home,
+           width=0.4, label="Home", color="#1f77b4")
+    ax.bar([i + 0.2 for i in x], valores_away,
+           width=0.4, label="Away", color="#ff7f0e")
 
-# Personalização
-ax.set_xticks(x)
-ax.set_xticklabels(categorias)
-ax.set_ylabel("Média de Gols")
-ax.set_title("Comparação de Gols: Home vs Away")
-ax.legend()
+    ax.set_xticks(x)
+    ax.set_xticklabels(categorias)
+    ax.set_ylabel("Média de Gols")
+    ax.set_title("Comparação de Gols: Home vs Away")
+    ax.legend()
 
-# Exibir no Streamlit
-st.pyplot(fig)
+    st.pyplot(fig)
+
+else:
+    st.warning(
+        "⚠️ Dados insuficientes para gerar o gráfico. Verifique se os DataFrames foram carregados corretamente.")
