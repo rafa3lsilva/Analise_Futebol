@@ -1,3 +1,4 @@
+import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
@@ -230,3 +231,29 @@ if "df_home_media" in locals() and not df_home_media.empty and \
 else:
     st.warning(
         "⚠️ Dados insuficientes para gerar o gráfico. Verifique se os DataFrames foram carregados corretamente.")
+
+
+# criando o metodo para BTTS
+
+# Garantindo que as médias sejam numéricas
+media_home_marcados = media_home_marcados or 0
+media_away_sofridos = media_away_sofridos or 0
+media_away_marcados = media_away_marcados or 0
+media_home_sofridos = media_home_sofridos or 0
+btts_home = (media_home_marcados + media_away_sofridos) / 2
+btts_away = (media_away_marcados + media_home_sofridos) / 2
+
+
+def btts_status(btts_home, btts_away):
+    if btts_home > 1.4 and btts_away > 1.4:
+        return "🟢 Alta chance"
+    elif btts_home > 1.2 and btts_away > 1.2:
+        return "🟡 Moderada"
+    else:
+        return "🔴 Baixa"
+
+
+st.markdown(
+    f"### 🔍 BTTS (Ambas Marcam): `{btts_home:.2f}` → {btts_status(btts_home, btts_away)}")
+
+
