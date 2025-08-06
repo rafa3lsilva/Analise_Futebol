@@ -256,4 +256,17 @@ def btts_status(btts_home, btts_away):
 st.markdown(
     f"### 🔍 BTTS (Ambas Marcam): `{btts_home:.2f}` → {btts_status(btts_home, btts_away)}")
 
+# criando o metodo para Over 2.5 Gols
+over_home = (media_home_marcados + media_away_sofridos) / 2
+over_away = (media_away_marcados + media_home_sofridos) / 2
 
+def over_status(over_home, over_away):
+    if over_home > 1.66 and over_away > 1.66:
+        return "🟢 Alta chance"
+    elif over_home > 1.4 and over_away > 1.4:
+        return "🟡 Moderada"
+    else:
+        return "🔴 Baixa"
+
+st.markdown(
+    f"### 🔍 Over 2.5 Gols: `{over_home:.2f}` → {over_status(over_home, over_away)}")
