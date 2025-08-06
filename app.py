@@ -196,7 +196,7 @@ if st.session_state.dados_jogos:
     st.write(f"⚽ Média de gols marcados (Away): {media_marcados:.2f}")
     st.write(f"🛡️ Média de gols sofridos (Away): {media_sofridos:.2f}")
 
-
+#st.write(plt.style.available)
 # Verifica se os DataFrames existem e não estão vazios
 if "df_home_media" in locals() and not df_home_media.empty and \
    "df_away_media" in locals() and not df_away_media.empty:
@@ -207,7 +207,9 @@ if "df_home_media" in locals() and not df_home_media.empty and \
     media_away_marcados = df_away_media["Gols Marcados"].mean() or 0
     media_away_sofridos = df_away_media["Gols Sofridos"].mean() or 0
 
-    # Dados para o gráfico
+    plt.style.use("seaborn-v0_8-darkgrid")  # estilo compatível
+
+    # Dados
     categorias = ["Gols Marcados", "Gols Sofridos"]
     valores_home = [media_home_marcados, media_home_sofridos]
     valores_away = [media_away_marcados, media_away_sofridos]
@@ -215,17 +217,30 @@ if "df_home_media" in locals() and not df_home_media.empty and \
 
     # Gráfico
     fig, ax = plt.subplots()
-    ax.bar([i - 0.2 for i in x], valores_home,
-           width=0.4, label="Home", color="#1f77b4")
-    ax.bar([i + 0.2 for i in x], valores_away,
-           width=0.4, label="Away", color="#ff7f0e")
+    fig.patch.set_facecolor("#f9f9f9")
+    ax.set_facecolor("#ffffff")
 
+    ax.bar([i - 0.2 for i in x], valores_home,
+        width=0.4, label="Home", color="#1f77b4")
+    ax.bar([i + 0.2 for i in x], valores_away,
+        width=0.4, label="Away", color="#ff7f0e")
+
+    # Valores nas barras
+    for i, v in enumerate(valores_home):
+        ax.text(i - 0.2, v + 0.05, f"{v:.2f}", ha='center', fontweight='bold')
+    for i, v in enumerate(valores_away):
+        ax.text(i + 0.2, v + 0.05, f"{v:.2f}", ha='center', fontweight='bold')
+
+    # Eixos e título
     ax.set_xticks(x)
-    ax.set_xticklabels(categorias)
-    ax.set_ylabel("Média de Gols")
-    ax.set_title("Comparação de Gols: Home vs Away")
+    ax.set_xticklabels(categorias, fontsize=12)
+    ax.set_ylabel("Média de Gols", fontsize=12)
+    ax.set_ylim(0, max(valores_home + valores_away) + 1)
+    ax.set_title("📊 Comparação de Gols: Mandante vs Visitante",
+                fontsize=14, fontweight='bold')
     ax.legend()
 
+    fig.tight_layout()
     st.pyplot(fig)
 
 else:
