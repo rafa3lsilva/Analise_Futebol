@@ -103,10 +103,28 @@ if st.session_state.dados_jogos:
     #st.write(df)
 
     #filtro para a média de gols do home
-    df_home_media = df.iloc[0:6]
+    st.sidebar.header("📊 Análise de Jogos de Futebol")
+    st.sidebar.write("Confronto")
+    home = st.sidebar.button(df["Time Referência"].unique()[0] if not df.empty else 'Home')
+    st.sidebar.write("  vs ")
+    away = st.sidebar.button(df["Time Referência"].unique()[1] if not df.empty else 'Away')
+
+    intervalo = st.radio("Selecione o intervalo de jogos:",
+             options=["Últimos 5 jogos", "Últimos 6 jogos", "Últimos 7 jogos", "Últimos 10 jogos"],
+             index=0,
+             horizontal=True)
+
+    # Extrai o número do texto selecionado
+    num_jogos = int(intervalo.split()[1])  # pega o número após "Últimos"
+
+    # Aplica o intervalo nos DataFrames
+    df_home_media = df.iloc[0:num_jogos]
+    df_away_media = df.iloc[10:10 + num_jogos]
+    #df_home_media = df.iloc[0:6]
 
     #filtro para exibir os últimos jogos (Home)
-    df_home = df.iloc[0:6]
+
+    df_home = df.iloc[0:num_jogos]
     flt_home = pd.DataFrame({"Data": df_home["Data"],
                              "Competição": df_home["Competição"],
                              "Time A": df_home["Time A"],
@@ -150,11 +168,8 @@ if st.session_state.dados_jogos:
     st.write(f"🛡️ Média de gols sofridos: {media_sofridos:.2f}")
 
 
-    # filtro para a média de gols do Away
-    df_away_media = df.iloc[10:16]
-
-    # filtro para exibir os últimos jogos (Away)
-    df_away = df.iloc[10:16]
+        # filtro para exibir os últimos jogos (Away)
+    df_away = df.iloc[10:10 + num_jogos]
     flt_away = pd.DataFrame({"Data": df_away["Data"],
                              "Competição": df_away["Competição"],
                              "Time A": df_away["Time A"],
