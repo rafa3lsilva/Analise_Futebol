@@ -334,8 +334,8 @@ if "df_home_media" in locals() and not df_home_media.empty and \
     """, unsafe_allow_html=True)
 
     # Exibe os últimos jogos (Home)
-    #st.subheader("Últimos Jogos (Home)")
-    #st.dataframe(drop_reset_index(flt_home))
+    st.subheader("Últimos Jogos (Home)")
+    st.dataframe(drop_reset_index(flt_home))
     # Exibe os últimos jogos (Away)
-    #st.subheader("Últimos Jogos (Away)")
-    #st.dataframe(drop_reset_index(flt_away))
+    st.subheader("Últimos Jogos (Away)")
+    st.dataframe(drop_reset_index(flt_away))
