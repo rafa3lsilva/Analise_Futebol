@@ -243,48 +243,43 @@ if "df_home_media" in locals() and not df_home_media.empty and \
     fig.tight_layout()
     st.pyplot(fig)
 
-#else:
-    #st.warning(
-        #"⚠️ Dados insuficientes para gerar o gráfico. Verifique se os DataFrames foram carregados corretamente.")
+    # criando o metodo para BTTS
 
-
-# criando o metodo para BTTS
-
-# Garantindo que as médias sejam numéricas
-if "media_home_marcados" in locals() and not df_home_media.empty and \
-   "media_away_media" in locals() and not df_away_media.empty:
+    # Garantindo que as médias sejam numéricas
     media_home_marcados = media_home_marcados or 0
     media_away_sofridos = media_away_sofridos or 0
     media_away_marcados = media_away_marcados or 0
     media_home_sofridos = media_home_sofridos or 0
 
-btts_home = (media_home_marcados + media_away_sofridos) / 2
-btts_away = (media_away_marcados + media_home_sofridos) / 2
+    btts_home = (media_home_marcados + media_away_sofridos) / 2
+    btts_away = (media_away_marcados + media_home_sofridos) / 2
 
 
-def btts_status(btts_home, btts_away):
-    if btts_home > 1.4 and btts_away > 1.4:
-        return "🟢 Alta chance"
-    elif btts_home > 1.2 and btts_away > 1.2:
-        return "🟡 Moderada"
-    else:
-        return "🔴 Baixa"
+    def btts_status(btts_home, btts_away):
+        if btts_home > 1.4 and btts_away > 1.4:
+            return "🟢 Alta chance"
+        elif btts_home > 1.2 and btts_away > 1.2:
+            return "🟡 Moderada"
+        else:
+            return "🔴 Baixa"
 
 
-st.markdown(
-    f"### 🔍 BTTS (Ambas Marcam): `{btts_home:.2f}` → {btts_status(btts_home, btts_away)}")
+    st.markdown(
+        f"### 🔍 BTTS (Ambas Marcam): `{btts_home:.2f}` → {btts_status(btts_home, btts_away)}")
 
-# criando o metodo para Over 2.5 Gols
-over_home = (media_home_marcados + media_away_sofridos) / 2
-over_away = (media_away_marcados + media_home_sofridos) / 2
+    # criando o metodo para Over 2.5 Gols
+    over_home = (media_home_marcados + media_away_sofridos) / 2
+    over_away = (media_away_marcados + media_home_sofridos) / 2
 
-def over_status(over_home, over_away):
-    if over_home > 1.66 and over_away > 1.66:
-        return "🟢 Alta chance"
-    elif over_home > 1.4 and over_away > 1.4:
-        return "🟡 Moderada"
-    else:
-        return "🔴 Baixa"
+    def over_status(over_home, over_away):
+        if over_home > 1.66 and over_away > 1.66:
+            return "🟢 Alta chance"
+        elif over_home > 1.4 and over_away > 1.4:
+            return "🟡 Moderada"
+        else:
+            return "🔴 Baixa"
 
-st.markdown(
-    f"### 🔍 Over 2.5 Gols: `{over_home:.2f}` → {over_status(over_home, over_away)}")
+    st.markdown(
+        f"### 🔍 Over 2.5 Gols: `{over_home:.2f}` → {over_status(over_home, over_away)}")
+    
+
