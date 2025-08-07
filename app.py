@@ -14,6 +14,21 @@ def drop_reset_index(df):
 
 st.title("📊 Análise de Jogos de Futebol")
 
+st.sidebar.header("📊 Análise de Jogos de Futebol")
+# Tutorial
+tutorial_url = "https://www.notion.so/Tutorial-Flashscore-2484bab1283b80f4b051e65d782a19d5?source=copy_link"
+
+st.sidebar.markdown(f"""
+    <div style="text-align: center; font-size: 16px;">
+        <a href="{tutorial_url}" target="_blank" style="text-decoration: none;">
+            <div style="margin-bottom: 10px; background-color:#1f77b4; padding:8px; border-radius:6px; color:white;">
+                📚 Tutorial
+            </div>
+        </a>
+    </div>
+""", unsafe_allow_html=True)
+st.sidebar.markdown("---")
+
 # Inicializa o estado
 if "dados_jogos" not in st.session_state:
     st.session_state.dados_jogos = None
@@ -104,8 +119,8 @@ if st.session_state.dados_jogos:
     home_team = df["Time Referência"].unique()[0] if not df.empty else 'Home'
     away_team = df["Time Referência"].unique()[1] if not df.empty else 'Away'
 
-    st.sidebar.header("📊 Análise de Jogos de Futebol")
-    st.sidebar.write("Confronto:")
+    #st.sidebar.header("📊 Análise de Jogos de Futebol")
+    st.sidebar.write("### Confronto:")
 
     # Layout vertical centralizado
     st.sidebar.markdown(f"""
@@ -119,6 +134,7 @@ if st.session_state.dados_jogos:
             </div>
         </div>
     """, unsafe_allow_html=True)
+    st.sidebar.markdown("---")
     
     # Seleção do intervalo de jogos
     intervalo = st.radio("Selecione o intervalo de jogos:",
@@ -267,7 +283,7 @@ if "df_home_media" in locals() and not df_home_media.empty and \
             return "🔴 Baixa"
 
     # Exibe os indicadores na sidebar
-    st.sidebar.markdown("---")
+   
     st.sidebar.markdown("### 🎯 Indicadores da Partida")
 
     # Card BTTS
