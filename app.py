@@ -100,7 +100,6 @@ if st.session_state.dados_jogos:
             i += 1
 
     df = pd.DataFrame(jogos)
-    #st.write(df)
 
     home_team = df["Time Referência"].unique()[0] if not df.empty else 'Home'
     away_team = df["Time Referência"].unique()[1] if not df.empty else 'Away'
@@ -120,10 +119,10 @@ if st.session_state.dados_jogos:
             </div>
         </div>
     """, unsafe_allow_html=True)
-
-
+    
+    # Seleção do intervalo de jogos
     intervalo = st.radio("Selecione o intervalo de jogos:",
-             options=["Últimos 5 jogos", "Últimos 6 jogos", "Últimos 7 jogos", "Últimos 10 jogos"],
+             options=["Últimos 5 jogos", "Últimos 6 jogos", "Últimos 9 jogos", "Últimos 10 jogos"],
              index=0,
              horizontal=True)
 
@@ -133,10 +132,8 @@ if st.session_state.dados_jogos:
     # Aplica o intervalo nos DataFrames
     df_home_media = df.iloc[0:num_jogos]
     df_away_media = df.iloc[10:10 + num_jogos]
-    #df_home_media = df.iloc[0:6]
 
     #filtro para exibir os últimos jogos (Home)
-
     df_home = df.iloc[0:num_jogos]
     flt_home = pd.DataFrame({"Data": df_home["Data"],
                              "Competição": df_home["Competição"],
@@ -146,8 +143,6 @@ if st.session_state.dados_jogos:
                              "Gols B": df_home["Gols B"],
                              "Resultado": df_home["Resultado"]})
 
-    #st.subheader("Últimos Jogos (Home)")
-    #st.dataframe(drop_reset_index(flt_home))
 
     # Cálculo da posição (Home/Away) — feito uma única vez
     df_home_media["Local"] = df_home_media.apply(
@@ -177,12 +172,8 @@ if st.session_state.dados_jogos:
     media_marcados = df_home_media["Gols Marcados"].mean()
     media_sofridos = df_home_media["Gols Sofridos"].mean()
 
-    #st.write(f"⚽ Média de gols marcados: {media_marcados:.2f}")
-    #st.write(f"🛡️ Média de gols sofridos: {media_sofridos:.2f}")
-
-
-        # filtro para exibir os últimos jogos (Away)
-    df_away = df.iloc[10:10 + num_jogos]
+    # filtro para exibir os últimos jogos (Away)
+    df_away = df.iloc[10:10 + num_jogos:]
     flt_away = pd.DataFrame({"Data": df_away["Data"],
                              "Competição": df_away["Competição"],
                              "Time A": df_away["Time A"],
@@ -190,8 +181,6 @@ if st.session_state.dados_jogos:
                              "Gols A": df_away["Gols A"],
                              "Gols B": df_away["Gols B"],
                              "Resultado": df_away["Resultado"]})
-    #st.subheader("Últimos Jogos (Away)")
-    #st.dataframe(drop_reset_index(flt_away))
 
     # Cálculo da posição (Home/Away) — feito uma única vez
     df_away_media["Local"] = df_away_media.apply(
@@ -221,10 +210,6 @@ if st.session_state.dados_jogos:
     media_marcados = df_away_media["Gols Marcados"].mean()
     media_sofridos = df_away_media["Gols Sofridos"].mean()
 
-    #st.write(f"⚽ Média de gols marcados (Away): {media_marcados:.2f}")
-    #st.write(f"🛡️ Média de gols sofridos (Away): {media_sofridos:.2f}")
-
-#st.write(plt.style.available)
 # Verifica se os DataFrames existem e não estão vazios
 if "df_home_media" in locals() and not df_home_media.empty and \
    "df_away_media" in locals() and not df_away_media.empty:
@@ -235,49 +220,27 @@ if "df_home_media" in locals() and not df_home_media.empty and \
     media_away_marcados = df_away_media["Gols Marcados"].mean() or 0
     media_away_sofridos = df_away_media["Gols Sofridos"].mean() or 0
 
-    plt.style.use("seaborn-v0_8-darkgrid")  # estilo compatível
+    
+    st.markdown("### 📋 Médias de Gols Home e Away", unsafe_allow_html=True)
 
-    # Dados
-    categorias = ["Gols Marcados", "Gols Sofridos"]
-    valores_home = [media_home_marcados, media_home_sofridos]
-    valores_away = [media_away_marcados, media_away_sofridos]
-    x = range(len(categorias))
-
-    # Gráfico
-    fig, ax = plt.subplots()
-    fig.patch.set_facecolor("#f9f9f9")
-    ax.set_facecolor("#ffffff")
-
-    ax.bar([i - 0.2 for i in x], valores_home,
-        width=0.4, label="Home", color="#1f77b4")
-    ax.bar([i + 0.2 for i in x], valores_away,
-        width=0.4, label="Away", color="#ff7f0e")
-
-    # Valores nas barras
-    for i, v in enumerate(valores_home):
-        ax.text(i - 0.2, v + 0.05, f"{v:.2f}", ha='center', fontweight='bold')
-    for i, v in enumerate(valores_away):
-        ax.text(i + 0.2, v + 0.05, f"{v:.2f}", ha='center', fontweight='bold')
-
-    # Eixos e título
-    ax.set_xticks(x)
-    ax.set_xticklabels(categorias, fontsize=12)
-    ax.set_ylabel("Média de Gols", fontsize=12)
-    ax.set_ylim(0, max(valores_home + valores_away) + 1)
-    ax.set_title("Comparação de Gols: Mandante vs Visitante",
-                fontsize=14, fontweight='bold')
-    ax.legend()
-
-    fig.tight_layout()
-    st.pyplot(fig)
+    st.markdown(f"""
+    <div style="display: flex; justify-content: space-around;">
+        <div style="background-color:#1f77b4; padding:15px; border-radius:8px; width:45%; text-align:center; color:white;">
+            <h3>🏠 {home_team}</h3>
+            <p style="font-size:18px;">⚽ Média de Gols Marcados: <strong>{media_home_marcados:.2f}</strong></p>
+            <p style="font-size:18px;">🛡️ Média de Gols Sofridos: <strong>{media_home_sofridos:.2f}</strong></p>
+        </div>
+        <div style="background-color:#d62728; padding:15px; border-radius:8px; width:45%; text-align:center; color:white;">
+            <h3>✈️ {away_team}</h3>
+            <p style="font-size:18px;">⚽ Média de Gols Marcados: <strong>{media_away_marcados:.2f}</strong></p>
+            <p style="font-size:18px;">🛡️ Média de Gols Sofridos: <strong>{media_away_sofridos:.2f}</strong></p>
+        </div>
+    </div>
+        """, unsafe_allow_html=True)
+    st.markdown("---")
 
     # criando o metodo para BTTS
-
     # Garantindo que as médias sejam numéricas
-    media_home_marcados = media_home_marcados or 0
-    media_away_sofridos = media_away_sofridos or 0
-    media_away_marcados = media_away_marcados or 0
-    media_home_sofridos = media_home_sofridos or 0
 
     btts_home = (media_home_marcados + media_away_sofridos) / 2
     btts_away = (media_away_marcados + media_home_sofridos) / 2
@@ -291,10 +254,6 @@ if "df_home_media" in locals() and not df_home_media.empty and \
         else:
             return "🔴 Baixa"
 
-
-    #st.markdown(
-       # f"### 🔍 BTTS (Ambas Marcam): `{btts_home:.2f}` → {btts_status(btts_home, btts_away)}")
-
     # criando o metodo para Over 2.5 Gols
     over_home = (media_home_marcados + media_away_sofridos) / 2
     over_away = (media_away_marcados + media_home_sofridos) / 2
@@ -307,11 +266,9 @@ if "df_home_media" in locals() and not df_home_media.empty and \
         else:
             return "🔴 Baixa"
 
-    #st.markdown(
-        #f"### 🔍 Over 2.5 Gols: `{over_home:.2f}` → {over_status(over_home, over_away)}")
-    
+    # Exibe os indicadores na sidebar
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### 🎯 Indicadores de Gols")
+    st.sidebar.markdown("### 🎯 Indicadores da Partida")
 
     # Card BTTS
     st.sidebar.markdown(f"""
