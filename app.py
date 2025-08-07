@@ -243,18 +243,21 @@ if "df_home_media" in locals() and not df_home_media.empty and \
     fig.tight_layout()
     st.pyplot(fig)
 
-else:
-    st.warning(
-        "⚠️ Dados insuficientes para gerar o gráfico. Verifique se os DataFrames foram carregados corretamente.")
+#else:
+    #st.warning(
+        #"⚠️ Dados insuficientes para gerar o gráfico. Verifique se os DataFrames foram carregados corretamente.")
 
 
 # criando o metodo para BTTS
 
 # Garantindo que as médias sejam numéricas
-media_home_marcados = media_home_marcados or 0
-media_away_sofridos = media_away_sofridos or 0
-media_away_marcados = media_away_marcados or 0
-media_home_sofridos = media_home_sofridos or 0
+if "media_home_marcados" in locals() and not df_home_media.empty and \
+   "media_away_media" in locals() and not df_away_media.empty:
+    media_home_marcados = media_home_marcados or 0
+    media_away_sofridos = media_away_sofridos or 0
+    media_away_marcados = media_away_marcados or 0
+    media_home_sofridos = media_home_sofridos or 0
+
 btts_home = (media_home_marcados + media_away_sofridos) / 2
 btts_away = (media_away_marcados + media_home_sofridos) / 2
 
