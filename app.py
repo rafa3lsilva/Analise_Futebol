@@ -102,12 +102,25 @@ if st.session_state.dados_jogos:
     df = pd.DataFrame(jogos)
     #st.write(df)
 
-    #filtro para a média de gols do home
+    home_team = df["Time Referência"].unique()[0] if not df.empty else 'Home'
+    away_team = df["Time Referência"].unique()[1] if not df.empty else 'Away'
+
     st.sidebar.header("📊 Análise de Jogos de Futebol")
-    st.sidebar.write("Confronto")
-    home = st.sidebar.button(df["Time Referência"].unique()[0] if not df.empty else 'Home')
-    st.sidebar.write("  vs ")
-    away = st.sidebar.button(df["Time Referência"].unique()[1] if not df.empty else 'Away')
+    st.sidebar.write("Confronto:")
+
+    # Layout vertical centralizado
+    st.sidebar.markdown(f"""
+        <div style="text-align: center; font-size: 16px;">
+            <div style="margin-bottom: 10px; background-color:#1f77b4; padding:8px; border-radius:6px; color:white;">
+                🏠 {home_team}
+            </div>
+            <div style="margin-bottom: 5px;">⚔️ vs</div>
+            <div style="background-color:#d62728; padding:8px; border-radius:6px; color:white;">
+                ✈️ {away_team}
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
 
     intervalo = st.radio("Selecione o intervalo de jogos:",
              options=["Últimos 5 jogos", "Últimos 6 jogos", "Últimos 7 jogos", "Últimos 10 jogos"],
