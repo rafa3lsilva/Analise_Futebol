@@ -146,8 +146,8 @@ if st.session_state.dados_jogos:
                              "Gols B": df_home["Gols B"],
                              "Resultado": df_home["Resultado"]})
 
-    st.subheader("Últimos Jogos (Home)")
-    st.dataframe(drop_reset_index(flt_home))
+    #st.subheader("Últimos Jogos (Home)")
+    #st.dataframe(drop_reset_index(flt_home))
 
     # Cálculo da posição (Home/Away) — feito uma única vez
     df_home_media["Local"] = df_home_media.apply(
@@ -177,8 +177,8 @@ if st.session_state.dados_jogos:
     media_marcados = df_home_media["Gols Marcados"].mean()
     media_sofridos = df_home_media["Gols Sofridos"].mean()
 
-    st.write(f"⚽ Média de gols marcados: {media_marcados:.2f}")
-    st.write(f"🛡️ Média de gols sofridos: {media_sofridos:.2f}")
+    #st.write(f"⚽ Média de gols marcados: {media_marcados:.2f}")
+    #st.write(f"🛡️ Média de gols sofridos: {media_sofridos:.2f}")
 
 
         # filtro para exibir os últimos jogos (Away)
@@ -190,8 +190,8 @@ if st.session_state.dados_jogos:
                              "Gols A": df_away["Gols A"],
                              "Gols B": df_away["Gols B"],
                              "Resultado": df_away["Resultado"]})
-    st.subheader("Últimos Jogos (Away)")
-    st.dataframe(drop_reset_index(flt_away))
+    #st.subheader("Últimos Jogos (Away)")
+    #st.dataframe(drop_reset_index(flt_away))
 
     # Cálculo da posição (Home/Away) — feito uma única vez
     df_away_media["Local"] = df_away_media.apply(
@@ -221,8 +221,8 @@ if st.session_state.dados_jogos:
     media_marcados = df_away_media["Gols Marcados"].mean()
     media_sofridos = df_away_media["Gols Sofridos"].mean()
 
-    st.write(f"⚽ Média de gols marcados (Away): {media_marcados:.2f}")
-    st.write(f"🛡️ Média de gols sofridos (Away): {media_sofridos:.2f}")
+    #st.write(f"⚽ Média de gols marcados (Away): {media_marcados:.2f}")
+    #st.write(f"🛡️ Média de gols sofridos (Away): {media_sofridos:.2f}")
 
 #st.write(plt.style.available)
 # Verifica se os DataFrames existem e não estão vazios
@@ -264,7 +264,7 @@ if "df_home_media" in locals() and not df_home_media.empty and \
     ax.set_xticklabels(categorias, fontsize=12)
     ax.set_ylabel("Média de Gols", fontsize=12)
     ax.set_ylim(0, max(valores_home + valores_away) + 1)
-    ax.set_title("📊 Comparação de Gols: Mandante vs Visitante",
+    ax.set_title("Comparação de Gols: Mandante vs Visitante",
                 fontsize=14, fontweight='bold')
     ax.legend()
 
@@ -292,8 +292,8 @@ if "df_home_media" in locals() and not df_home_media.empty and \
             return "🔴 Baixa"
 
 
-    st.markdown(
-        f"### 🔍 BTTS (Ambas Marcam): `{btts_home:.2f}` → {btts_status(btts_home, btts_away)}")
+    #st.markdown(
+       # f"### 🔍 BTTS (Ambas Marcam): `{btts_home:.2f}` → {btts_status(btts_home, btts_away)}")
 
     # criando o metodo para Over 2.5 Gols
     over_home = (media_home_marcados + media_away_sofridos) / 2
@@ -307,7 +307,35 @@ if "df_home_media" in locals() and not df_home_media.empty and \
         else:
             return "🔴 Baixa"
 
-    st.markdown(
-        f"### 🔍 Over 2.5 Gols: `{over_home:.2f}` → {over_status(over_home, over_away)}")
+    #st.markdown(
+        #f"### 🔍 Over 2.5 Gols: `{over_home:.2f}` → {over_status(over_home, over_away)}")
     
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 🎯 Indicadores de Gols")
 
+    # Card BTTS
+    st.sidebar.markdown(f"""
+        <div style="background-color:#262730; padding:10px; border-radius:8px; text-align:center;">
+            <span style="font-size:16px; font-weight:bold; color:white;">🔍 BTTS (Ambas Marcam)</span><br>
+            <span style="font-size:20px; font-weight:bold; color:white;">{btts_home:.2f}</span><br>
+            <span style="font-size:16px;">{btts_status(btts_home, btts_away)}</span>
+        </div>
+    """, unsafe_allow_html=True)
+
+    st.sidebar.markdown("")
+
+    # Card Over 2.5
+    st.sidebar.markdown(f"""
+        <div style="background-color:#262730; padding:10px; border-radius:8px; text-align:center;">
+            <span style="font-size:16px; font-weight:bold; color:white;">🔍 Over 2.5 Gols</span><br>
+            <span style="font-size:20px; font-weight:bold; color:white;">{over_home:.2f}</span><br>
+            <span style="font-size:16px;">{over_status(over_home, over_away)}</span>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Exibe os últimos jogos (Home)
+    #st.subheader("Últimos Jogos (Home)")
+    #st.dataframe(drop_reset_index(flt_home))
+    # Exibe os últimos jogos (Away)
+    #st.subheader("Últimos Jogos (Away)")
+    #st.dataframe(drop_reset_index(flt_away))
