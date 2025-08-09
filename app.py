@@ -12,7 +12,24 @@ def drop_reset_index(df):
     return df
 
 
-st.title("📊 Análise de Jogos de Futebol")
+# Função para configurar a página Streamlit
+def configurar_pagina():
+    st.set_page_config(
+        page_title="Análise Futebol",
+        page_icon=":soccer:",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+
+configurar_pagina()
+
+# Título da página
+st.markdown("<h1 style='text-align: center;'>📊 Análise de Jogos de Futebol</h1>", unsafe_allow_html=True)
+
+# Descrição
+st.markdown("<p style='text-align: center;'>Esta é uma aplicação para análise de jogos de futebol usando dados do site Flashscore.</p>",unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Você pode fazer upload de arquivos .txt com os dados dos jogos e obter análises detalhadas.</p>", unsafe_allow_html=True)
+st.markdown("---")
 
 st.sidebar.header("📊 Análise de Jogos de Futebol")
 # Tutorial
@@ -27,7 +44,6 @@ st.sidebar.markdown(f"""
         </a>
     </div>
 """, unsafe_allow_html=True)
-st.sidebar.markdown("---")
 
 # Inicializa o estado
 if "dados_jogos" not in st.session_state:
@@ -35,9 +51,10 @@ if "dados_jogos" not in st.session_state:
 
 # Botão para reiniciar
 if st.session_state.dados_jogos:
-    if st.button("🔄 Novo Arquivo"):
+    if st.sidebar.button("🔄 Novo Arquivo"):
         st.session_state.dados_jogos = None
         st.rerun()
+    st.sidebar.markdown("---")
 
 # Upload do arquivo (só aparece se ainda não foi carregado)
 if not st.session_state.dados_jogos:
@@ -136,11 +153,19 @@ if st.session_state.dados_jogos:
     """, unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # Seleção do intervalo de jogos
-    intervalo = st.radio("Selecione o intervalo de jogos:",
-             options=["Últimos 5 jogos", "Últimos 6 jogos", "Últimos 9 jogos", "Últimos 10 jogos"],
-             index=0,
-             horizontal=True)
+    # Seleção do intervalo de jogos com visual aprimorado
+    st.markdown(
+        "<h3 style='text-align: center; color: #1f77b4;'>Selecione o intervalo de jogos:</h3>",
+        unsafe_allow_html=True
+    )
+    intervalo = st.radio(
+        "",
+        options=["Últimos 5 jogos", "Últimos 6 jogos", "Últimos 9 jogos", "Últimos 10 jogos"],
+        index=0,
+        horizontal=True,
+        key="intervalo_radio"
+    )
+    st.markdown("<br>", unsafe_allow_html=True)
 
     # Extrai o número do texto selecionado
     num_jogos = int(intervalo.split()[1])  # pega o número após "Últimos"
@@ -237,7 +262,7 @@ if "df_home_media" in locals() and not df_home_media.empty and \
     media_away_sofridos = df_away_media["Gols Sofridos"].mean() or 0
 
     
-    st.markdown("### 📋 Médias de Gols Home e Away", unsafe_allow_html=True)
+    st.markdown("### 📋 Médias de Gols", unsafe_allow_html=True)
 
     st.markdown(f"""
     <div style="display: flex; justify-content: space-around;">
@@ -307,8 +332,8 @@ if "df_home_media" in locals() and not df_home_media.empty and \
     """, unsafe_allow_html=True)
 
     # Exibe os últimos jogos (Home)
-    st.subheader("Últimos Jogos (Home)")
+    st.subheader(f"Últimos {num_jogos} jogos de {home_team}")
     st.dataframe(drop_reset_index(flt_home))
     # Exibe os últimos jogos (Away)
-    st.subheader("Últimos Jogos (Away)")
+    st.subheader(f"Últimos {num_jogos} jogos de {away_team}")
     st.dataframe(drop_reset_index(flt_away))
