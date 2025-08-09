@@ -27,9 +27,13 @@ configurar_pagina()
 st.markdown("<h1 style='text-align: center;'>📊 Análise de Jogos de Futebol</h1>", unsafe_allow_html=True)
 
 # Descrição
-st.markdown("<p style='text-align: center;'>Esta é uma aplicação para análise de jogos de futebol usando dados do site Flashscore.</p>",unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Você pode fazer upload de arquivos .txt com os dados dos jogos e obter análises detalhadas.</p>", unsafe_allow_html=True)
-st.markdown("---")
+st.markdown("""
+<div  style="text-align: center; font-size: 16px;">
+    <p style='text-align: center;'>Esta é uma aplicação para análise de jogos de futebol usando dados do site Flashscore.</p>
+    <p style='text-align: center;'>Você pode fazer upload de arquivos .txt com os dados dos jogos e obter análises detalhadas.</p>
+    <p style='text-align: center;'>Para mais informações, consulte o tutorial na barra lateral.</p>
+</div>
+""", unsafe_allow_html=True)
 
 st.sidebar.header("📊 Análise de Jogos de Futebol")
 # Tutorial
@@ -44,6 +48,7 @@ st.sidebar.markdown(f"""
         </a>
     </div>
 """, unsafe_allow_html=True)
+st.sidebar.markdown("<br>", unsafe_allow_html=True)
 
 # Inicializa o estado
 if "dados_jogos" not in st.session_state:
@@ -54,7 +59,6 @@ if st.session_state.dados_jogos:
     if st.sidebar.button("🔄 Novo Arquivo"):
         st.session_state.dados_jogos = None
         st.rerun()
-    st.sidebar.markdown("---")
 
 # Upload do arquivo (só aparece se ainda não foi carregado)
 if not st.session_state.dados_jogos:
@@ -151,11 +155,11 @@ if st.session_state.dados_jogos:
             </div>
         </div>
     """, unsafe_allow_html=True)
-    st.sidebar.markdown("---")
+    st.sidebar.markdown("<br>", unsafe_allow_html=True)
     
     # Seleção do intervalo de jogos com visual aprimorado
     st.markdown(
-        "<h3 style='text-align: center; color: #1f77b4;'>Selecione o intervalo de jogos:</h3>",
+        "<h3 style='text-align: Left; color: #1f77b4;margin-bottom: -70px'>Selecione o intervalo de jogos:</h3>",
         unsafe_allow_html=True
     )
     intervalo = st.radio(
@@ -165,8 +169,7 @@ if st.session_state.dados_jogos:
         horizontal=True,
         key="intervalo_radio"
     )
-    st.markdown("<br>", unsafe_allow_html=True)
-
+    
     # Extrai o número do texto selecionado
     num_jogos = int(intervalo.split()[1])  # pega o número após "Últimos"
 
@@ -278,7 +281,7 @@ if "df_home_media" in locals() and not df_home_media.empty and \
         </div>
     </div>
         """, unsafe_allow_html=True)
-    st.markdown("---")
+    st.markdown("<br>", unsafe_allow_html=True)
 
     # criando o metodo para BTTS
     # Garantindo que as médias sejam numéricas
@@ -332,8 +335,8 @@ if "df_home_media" in locals() and not df_home_media.empty and \
     """, unsafe_allow_html=True)
 
     # Exibe os últimos jogos (Home)
-    st.subheader(f"Últimos {num_jogos} jogos de {home_team}")
+    st.subheader(f"Últimos {num_jogos} jogos do {home_team}")
     st.dataframe(drop_reset_index(flt_home))
     # Exibe os últimos jogos (Away)
-    st.subheader(f"Últimos {num_jogos} jogos de {away_team}")
+    st.subheader(f"Últimos {num_jogos} jogos do {away_team}")
     st.dataframe(drop_reset_index(flt_away))
