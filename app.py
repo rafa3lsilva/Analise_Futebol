@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
 import re
+import data as db
 
 
 def drop_reset_index(df):
@@ -50,93 +51,8 @@ st.sidebar.markdown(f"""
 """, unsafe_allow_html=True)
 st.sidebar.markdown("<br>", unsafe_allow_html=True)
 
-# Inicializa o estado
-if "dados_jogos" not in st.session_state:
-    st.session_state.dados_jogos = None
-
-# Botão para reiniciar
-if st.session_state.dados_jogos:
-    if st.sidebar.button("🔄 Novo Arquivo"):
-        st.session_state.dados_jogos = None
-        st.rerun()
-
-# Upload do arquivo (só aparece se ainda não foi carregado)
-if not st.session_state.dados_jogos:
-    uploaded_file = st.file_uploader(
-        "Escolha o arquivo .txt com os dados dos jogos", type="txt")
-
-    if uploaded_file:
-        linhas = uploaded_file.read().decode("utf-8").splitlines()
-        linhas = [linha.strip() for linha in linhas if linha.strip()]
-        st.session_state.dados_jogos = linhas
-        st.rerun()
-
-# Processamento dos dados (só se o arquivo foi carregado)
-if st.session_state.dados_jogos:
-    linhas = st.session_state.dados_jogos
-    jogos = []
-    i = 0
-    time_referencia = None
-
-    while i < len(linhas):
-        if linhas[i].startswith("Últimos jogos:"):
-            time_referencia = linhas[i].split(":")[1].strip()
-            i += 1
-            continue
-
-        if time_referencia is None:
-            i += 1
-            continue
-
-        if i + 6 >= len(linhas):
-            break
-
-        try:
-            data = linhas[i]
-            competencia = linhas[i+1]
-            time_a = linhas[i+2]
-            time_b = linhas[i+3]
-
-            if (i + 8 < len(linhas) and
-                re.match(r"^\d+$", linhas[i+4]) and
-                re.match(r"^\d+$", linhas[i+5]) and
-                re.match(r"^\d+$", linhas[i+6]) and
-                    re.match(r"^\d+$", linhas[i+7])):
-                gols_a = int(linhas[i+6])
-                gols_b = int(linhas[i+7])
-                resultado_original = linhas[i+8]
-                i += 9
-            else:
-                gols_a = int(linhas[i+4])
-                gols_b = int(linhas[i+5])
-                resultado_original = linhas[i+6]
-                i += 7
-
-            if gols_a > gols_b:
-                resultado_corrigido = "V"
-            elif gols_a < gols_b:
-                resultado_corrigido = "D"
-            else:
-                resultado_corrigido = "E"
-
-            jogo = {
-                "Time Referência": time_referencia,
-                "Data": data,
-                "Competição": competencia,
-                "Time A": time_a,
-                "Time B": time_b,
-                "Gols A": gols_a,
-                "Gols B": gols_b,
-                "Resultado": resultado_corrigido
-            }
-
-            jogos.append(jogo)
-
-        except (IndexError, ValueError):
-            i += 1
-
-    df = pd.DataFrame(jogos)
-
+df = db.processar_dados()
+if 'Data' in df.columns:
     home_team = df["Time Referência"].unique()[0] if not df.empty else 'Home'
     away_team = df["Time Referência"].unique()[1] if not df.empty else 'Away'
 
@@ -156,10 +72,10 @@ if st.session_state.dados_jogos:
         </div>
     """, unsafe_allow_html=True)
     st.sidebar.markdown("<br>", unsafe_allow_html=True)
-    
+
     # Seleção do intervalo de jogos com visual aprimorado
     st.markdown(
-        "<h3 style='text-align: Left; color: #1f77b4;margin-bottom: -70px'>Selecione o intervalo de jogos:</h3>",
+        "<h3 style='text-align: Left; color: #1f77b4;margin-bottom: -50px'>Selecione o intervalo de jogos:</h3>",
         unsafe_allow_html=True
     )
     intervalo = st.radio(
@@ -169,7 +85,7 @@ if st.session_state.dados_jogos:
         horizontal=True,
         key="intervalo_radio"
     )
-    
+
     # Extrai o número do texto selecionado
     num_jogos = int(intervalo.split()[1])  # pega o número após "Últimos"
 
@@ -178,14 +94,15 @@ if st.session_state.dados_jogos:
     df_away_media = df.iloc[10:10 + num_jogos]
 
     #filtro para exibir os últimos jogos (Home)
+
     df_home = df.iloc[0:num_jogos]
     flt_home = pd.DataFrame({"Data": df_home["Data"],
-                             "Competição": df_home["Competição"],
-                             "Time A": df_home["Time A"],
-                             "Time B": df_home["Time B"],
-                             "Gols A": df_home["Gols A"],
-                             "Gols B": df_home["Gols B"],
-                             "Resultado": df_home["Resultado"]})
+                                "Competição": df_home["Competição"],
+                                "Time A": df_home["Time A"],
+                                "Time B": df_home["Time B"],
+                                "Gols A": df_home["Gols A"],
+                                "Gols B": df_home["Gols B"],
+                                "Resultado": df_home["Resultado"]})
 
 
     # Cálculo da posição (Home/Away) — feito uma única vez
@@ -219,12 +136,12 @@ if st.session_state.dados_jogos:
     # filtro para exibir os últimos jogos (Away)
     df_away = df.iloc[10:10 + num_jogos:]
     flt_away = pd.DataFrame({"Data": df_away["Data"],
-                             "Competição": df_away["Competição"],
-                             "Time A": df_away["Time A"],
-                             "Time B": df_away["Time B"],
-                             "Gols A": df_away["Gols A"],
-                             "Gols B": df_away["Gols B"],
-                             "Resultado": df_away["Resultado"]})
+                                "Competição": df_away["Competição"],
+                                "Time A": df_away["Time A"],
+                                "Time B": df_away["Time B"],
+                                "Gols A": df_away["Gols A"],
+                                "Gols B": df_away["Gols B"],
+                                "Resultado": df_away["Resultado"]})
 
     # Cálculo da posição (Home/Away) — feito uma única vez
     df_away_media["Local"] = df_away_media.apply(
@@ -254,17 +171,17 @@ if st.session_state.dados_jogos:
     media_marcados = df_away_media["Gols Marcados"].mean()
     media_sofridos = df_away_media["Gols Sofridos"].mean()
 
-# Verifica se os DataFrames existem e não estão vazios
-if "df_home_media" in locals() and not df_home_media.empty and \
-   "df_away_media" in locals() and not df_away_media.empty:
+    # Verifica se os DataFrames existem e não estão vazios
+    if "df_home_media" in locals() and not df_home_media.empty and \
+    "df_away_media" in locals() and not df_away_media.empty:
 
-    # Calcula as médias com fallback para zero se estiverem vazias
-    media_home_marcados = df_home_media["Gols Marcados"].mean() or 0
-    media_home_sofridos = df_home_media["Gols Sofridos"].mean() or 0
-    media_away_marcados = df_away_media["Gols Marcados"].mean() or 0
-    media_away_sofridos = df_away_media["Gols Sofridos"].mean() or 0
+        # Calcula as médias com fallback para zero se estiverem vazias
+        media_home_marcados = df_home_media["Gols Marcados"].mean() or 0
+        media_home_sofridos = df_home_media["Gols Sofridos"].mean() or 0
+        media_away_marcados = df_away_media["Gols Marcados"].mean() or 0
+        media_away_sofridos = df_away_media["Gols Sofridos"].mean() or 0
 
-    
+
     st.markdown("### 📋 Médias de Gols", unsafe_allow_html=True)
 
     st.markdown(f"""
@@ -311,7 +228,7 @@ if "df_home_media" in locals() and not df_home_media.empty and \
             return "🔴 Baixa"
 
     # Exibe os indicadores na sidebar
-   
+
     st.sidebar.markdown("### 🎯 Indicadores da Partida")
 
     # Card BTTS
